@@ -136,7 +136,7 @@ func (cov *Coverage) parseProfiles(profiles []*Profile, pkgMap map[string]*packa
 		pkgName := getPackageName(profile.FileName)
 		pkgPkg := pkgMap[pkgName]
 		if err := cov.parseProfile(profile, pkgPkg, ignore); err != nil {
-			return err
+			return fmt.Errorf("parse profile %s: %v", profile.FileName, err)
 		}
 	}
 	cov.LinesValid = cov.NumLines()
