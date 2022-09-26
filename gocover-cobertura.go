@@ -60,12 +60,12 @@ func main() {
 func convert(in io.Reader, out io.Writer, ignore *Ignore) error {
 	profiles, err := ParseProfiles(in, ignore)
 	if err != nil {
-		return err
+		return fmt.Errorf("parse profiles: %v", err)
 	}
 
 	pkgs, err := getPackages(profiles)
 	if err != nil {
-		return err
+		return fmt.Errorf("get packages: %v", err)
 	}
 
 	sources := make([]*Source, 0)
@@ -77,7 +77,7 @@ func convert(in io.Reader, out io.Writer, ignore *Ignore) error {
 
 	coverage := Coverage{Sources: sources, Packages: nil, Timestamp: time.Now().UnixNano() / int64(time.Millisecond)}
 	if err := coverage.parseProfiles(profiles, pkgMap, ignore); err != nil {
-		return err
+		return fmt.Errorf("coverage parse profiles: %v", err)
 	}
 
 	_, _ = fmt.Fprint(out, xml.Header)
@@ -86,7 +86,7 @@ func convert(in io.Reader, out io.Writer, ignore *Ignore) error {
 	encoder := xml.NewEncoder(out)
 	encoder.Indent("", "  ")
 	if err := encoder.Encode(coverage); err != nil {
-		return err
+		return fmt.Errorf("encode coverage: %v", err)
 	}
 
 	_, _ = fmt.Fprintln(out)
